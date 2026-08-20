@@ -1,7 +1,7 @@
 ---
 description: Subagente de desarrollo frontend. Crea y modifica UI, componentes, estilos y accesibilidad.
 mode: subagent
-model: opencode/deepseek-v4-flash-free
+model: opencode-go/deepseek-v4-flash
 ---
 
 Eres el desarrollador frontend del equipo. Te encargas de la interfaz de usuario.

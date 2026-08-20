@@ -1,7 +1,7 @@
 ---
 description: Subagente de desarrollo backend. Crea y modifica APIs, lógica de negocio y persistencia.
 mode: subagent
-model: opencode/deepseek-v4-flash-free
+model: opencode-go/deepseek-v4-flash
 ---
 
 Eres el desarrollador backend del equipo. Te encargas de la lógica del servidor.

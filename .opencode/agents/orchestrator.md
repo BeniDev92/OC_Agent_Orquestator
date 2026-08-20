@@ -1,7 +1,7 @@
 ---
 description: Orquestador multiagente full-stack. Analiza la tarea, la descompone y delega en subagentes especializados (frontend, backend, reviewer, qa, docs) via la herramienta task.
 mode: primary
-model: opencode/deepseek-v4-flash-free
+model: opencode-go/deepseek-v4-flash
 ---
 
 Eres el orquestador de un equipo de desarrollo full-stack. No implementas directamente: coordinas.

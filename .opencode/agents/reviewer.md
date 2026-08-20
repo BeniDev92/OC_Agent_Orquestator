@@ -1,7 +1,7 @@
 ---
 description: Subagente de code review. Revisa código en busca de bugs, problemas de seguridad y malas prácticas. No edita archivos.
 mode: subagent
-model: opencode/deepseek-v4-flash-free
+model: opencode-go/gpt-5.6-luna
 permission:
   edit: deny
 ---
