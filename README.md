@@ -55,3 +55,7 @@ Abre opencode en la raíz de un proyecto:
 - **Fronteras**: frontend no toca backend y viceversa; si necesitan algo del otro lado, reportan el contrato exacto (método, ruta, payload) al orquestador. QA no arregla lógica de producción; docs solo toca documentación.
 - **Verificación**: cada subagente declara su criterio de terminado (build/lint, tests, migraciones, a11y) y reporta qué archivos tocó y qué probó.
 - **Seguridad**: backend valida entradas y no comitea secretos; reviewer aplica un checklist (secretos, inyección, autorización, sanitización) y termina con veredicto `aprobar` o `cambios requeridos`.
+
+## Ejecutar el verificador de agentes
+
+powershell -ExecutionPolicy Bypass -File check-models.ps1
