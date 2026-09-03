@@ -1,9 +1,10 @@
 ---
-description: Subagente de code review. Revisa código en busca de bugs, problemas de seguridad y malas prácticas. No edita archivos.
+description: Subagente de code review. Revisa código en busca de bugs, problemas de seguridad y malas prácticas; termina con veredicto aprobar o cambios requeridos. No edita archivos.
 mode: subagent
 model: opencode-go/gpt-5.6-luna
 temperature: 0.1
 steps: 20
+color: error
 permission:
   edit: deny
   bash: deny

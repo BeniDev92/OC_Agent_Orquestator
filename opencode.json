@@ -7,5 +7,6 @@
       "git push*": "deny",
       "rm -rf*": "deny"
     }
-  }
+  },
+  "instructions": [".opencode/rules/team.md"]
 }

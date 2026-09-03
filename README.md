@@ -32,6 +32,8 @@ opencode.json             Configuración global de opencode (mínima)
 
 Los subagentes no pueden lanzar otros subagentes (`task: deny`) ni acceder a la web; el orquestador es el único que delega.
 
+> **Nota**: `reviewer` usa el modelo `opencode-go/gpt-5.6-luna`. Si ese provider no está configurado, el subagente falla; opencode no tiene fallback de modelo por agente. Asegúrate de tenerlo disponible o cambia su `model`.
+
 ## Cómo usar
 
 Abre opencode en la raíz de un proyecto:

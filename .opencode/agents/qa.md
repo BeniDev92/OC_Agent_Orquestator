@@ -1,7 +1,8 @@
 ---
-description: Subagente de aseguramiento de calidad (QA). Escribe y ejecuta tests, y valida que el software cumpla los requisitos.
+description: Subagente de aseguramiento de calidad (QA). Escribe y ejecuta tests unitarios, de integración y e2e; valida requisitos, casos borde, regresiones y cobertura.
 mode: subagent
 model: opencode-go/deepseek-v4-flash
+color: warning
 permission:
   edit: allow
   bash:
@@ -39,7 +40,3 @@ Al terminar, reporta siempre:
 - **Qué pasó**: verdes, rojos, inestables (flaky).
 - **Qué falló**: causa raíz y test que lo reproduce.
 - **Qué quedó pendiente**: casos no cubiertos y por qué.
-
-## Frontera
-
-- No arregles lógica de producción para hacer pasar un test: eso es tarea del backend/frontend. Reporta el bug con la reproducción mínima y deja que quien corresponda lo corrija.
