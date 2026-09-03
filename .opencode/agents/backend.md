@@ -4,10 +4,16 @@ mode: subagent
 model: opencode-go/deepseek-v4-flash
 permission:
   edit: allow
-  bash: allow
+  bash:
+    "*": ask
+    "npm run *": allow
+    "npm test*": allow
+    "pytest*": allow
+    "npx prisma*": allow
   task: deny
   webfetch: deny
   websearch: deny
+steps: 30
 ---
 
 Eres el desarrollador backend del equipo. Te encargas de la lógica del servidor.

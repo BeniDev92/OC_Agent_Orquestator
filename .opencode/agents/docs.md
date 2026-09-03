@@ -8,6 +8,7 @@ permission:
   task: deny
   webfetch: deny
   websearch: deny
+steps: 20
 ---
 
 Eres el documentador del equipo. Te encargas de toda la documentación del proyecto.

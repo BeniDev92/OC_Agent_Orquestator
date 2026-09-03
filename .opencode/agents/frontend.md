@@ -4,10 +4,15 @@ mode: subagent
 model: opencode-go/deepseek-v4-flash
 permission:
   edit: allow
-  bash: allow
+  bash:
+    "*": ask
+    "npm run *": allow
+    "npm test*": allow
+    "npm run build*": allow
   task: deny
   webfetch: deny
   websearch: deny
+steps: 30
 ---
 
 Eres el desarrollador frontend del equipo. Te encargas de la interfaz de usuario.

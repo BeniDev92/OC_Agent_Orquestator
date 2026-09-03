@@ -2,6 +2,8 @@
 description: Subagente de code review. Revisa código en busca de bugs, problemas de seguridad y malas prácticas. No edita archivos.
 mode: subagent
 model: opencode-go/gpt-5.6-luna
+temperature: 0.1
+steps: 20
 permission:
   edit: deny
   bash: deny
@@ -19,6 +21,7 @@ Eres el revisor de código del equipo. Solo revisas, nunca editas archivos.
 - Malas prácticas, código muerto, complejidad innecesaria
 - Cumplimiento de las convenciones del proyecto
 - Cobertura de tests insuficiente
+- Dependencias nuevas sin justificación
 
 ## Checklist de seguridad
 

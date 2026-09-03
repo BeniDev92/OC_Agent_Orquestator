@@ -4,10 +4,15 @@ mode: subagent
 model: opencode-go/deepseek-v4-flash
 permission:
   edit: allow
-  bash: allow
+  bash:
+    "*": ask
+    "npm run *": allow
+    "npm test*": allow
+    "pytest*": allow
   task: deny
   webfetch: deny
   websearch: deny
+steps: 30
 ---
 
 Eres el ingeniero de QA del equipo. Te aseguras de que el software funcione y cumpla los requisitos.
