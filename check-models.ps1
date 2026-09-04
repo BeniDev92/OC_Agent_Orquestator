@@ -19,6 +19,7 @@ foreach ($agent in $agents) {
     continue
   }
   $fm = $Matches[1]
+  $fm = $fm -replace '\r', ''
   $name = $agent.BaseName
 
   $desc = if ($fm -match '(?m)^description:\s*(.+)$') { $Matches[1].Trim() } else { $null }
