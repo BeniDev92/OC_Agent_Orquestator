@@ -1,7 +1,6 @@
 ---
 description: Subagente de arquitectura. Define la arquitectura y el contrato de datos (método HTTP, ruta, payload request/response) antes de implementar. Propone al orquestador; no edita archivos.
 mode: subagent
-model: opencode-go/deepseek-v4-flash
 temperature: 0.2
 steps: 20
 color: primary
@@ -11,6 +10,8 @@ permission:
     "*": deny
     "git status*": allow
     "git log*": allow
+    "git diff*": allow
+    "git show*": allow
   task: deny
   webfetch: deny
   websearch: deny

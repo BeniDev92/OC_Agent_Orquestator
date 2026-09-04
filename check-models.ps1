@@ -5,30 +5,76 @@ if (-not (Get-Command opencode -ErrorAction SilentlyContinue)) {
   exit 1
 }
 
+$fail = $false
+$errors = @()
+
+# modelo por defecto en la raiz: todos los agentes sin model lo heredan
+$config = Get-Content "opencode.json" -Raw | ConvertFrom-Json
+if (-not $config.model) {
+  $errors += "ERROR: opencode.json no declara 'model' por defecto."
+  $fail = $true
+}
+$rootModel = $config.model
+
+$effective = @{}
 $agents = Get-ChildItem ".opencode\agents\*.md"
-$declared = foreach ($agent in $agents) {
-  $model = Select-String -Path $agent.FullName -Pattern '^model:\s*(\S+)$' | ForEach-Object { $_.Matches[0].Groups[1].Value }
-  if ($model) { [PSCustomObject]@{ Agent = $agent.BaseName; Model = $model } }
+foreach ($agent in $agents) {
+  $raw = Get-Content $agent.FullName -Raw
+  if ($raw -notmatch '(?s)^---\s*\n(.*?)\n---') {
+    $errors += "$($agent.BaseName): sin frontmatter valido (--- ... ---)"
+    $fail = $true
+    continue
+  }
+  $fm = $Matches[1]
+  $name = $agent.BaseName
+
+  $desc = if ($fm -match '(?m)^description:\s*(.+)$') { $Matches[1].Trim() } else { $null }
+  $mode = if ($fm -match '(?m)^mode:\s*(\S+)$') { $Matches[1] } else { $null }
+  $model = if ($fm -match '(?m)^model:\s*(\S+)$') { $Matches[1] } else { $null }
+  $taskAllow = ($fm -match '(?m)^\s*task:\s*allow\s*$')
+
+  if (-not $desc) { $errors += "${name}: falta 'description'"; $fail = $true }
+  if ($mode -notin @("primary", "subagent")) { $errors += "${name}: mode invalido ('$mode')"; $fail = $true }
+  if ($taskAllow -and $mode -eq "subagent") { $errors += "${name}: un subagent no puede tener 'task: allow'"; $fail = $true }
+
+  if ($model) {
+    if ($model -notmatch '^[^/]+/[^/]+$') { $errors += "${name}: model mal formado ('$model')"; $fail = $true }
+    else { $effective[$name] = $model }
+  } elseif ($rootModel) {
+    $effective[$name] = $rootModel
+  } else {
+    $errors += "${name}: sin model y sin modelo por defecto en opencode.json"; $fail = $true
+  }
 }
 
-$providers = $declared.Model | ForEach-Object { ($_ -split '/')[0] } | Select-Object -Unique
-
+# disponibilidad: si el provider no responde (CI sin credenciales), se omite y avisa
+$providers = $effective.Values | ForEach-Object { ($_ -split '/')[0] } | Select-Object -Unique
 $available = @{}
 foreach ($p in $providers) {
   $out = (opencode models $p) 2>$null
   if ($LASTEXITCODE -ne 0 -or -not $out) {
-    Write-Host "No se pudo consultar el provider '$p'. Verifica su configuracion."
-    exit 1
+    Write-Host "WARN: provider '$p' no consultable (sin credenciales o sin config). Se omite su verificacion."
+    $available[$p] = $null
+  } else {
+    $available[$p] = @($out -split "\n")
   }
-  $available[$p] = @($out -split "\n")
 }
 
-$missing = $declared | Where-Object { $available[($_.Model -split '/')[0]] -notcontains $_.Model }
-if ($missing) {
-  $missing | ForEach-Object { Write-Host "MISSING: $($_.Agent) -> $($_.Model)" }
-  Write-Host "`nVerifica el provider o cambia el model del agente. (opencode no tiene fallback por agente.)"
+foreach ($name in ($effective.Keys | Sort-Object)) {
+  $m = $effective[$name]
+  $list = $available[($m -split '/')[0]]
+  if ($null -eq $list) { continue }
+  if ($list -notcontains $m) {
+    $errors += "MISSING: $name -> $m"
+    $fail = $true
+  }
+}
+
+if ($errors) {
+  $errors | ForEach-Object { Write-Host $_ }
+  Write-Host "`nCorrige los errores antes de continuar. (opencode no tiene fallback de modelo por agente.)"
   exit 1
 } else {
-  $declared | ForEach-Object { Write-Host "OK: $($_.Agent) -> $($_.Model)" }
-  Write-Host "`nTodos los modelos estan disponibles."
+  $effective.GetEnumerator() | Sort-Object Name | ForEach-Object { Write-Host "OK: $($_.Key) -> $($_.Value)" }
+  Write-Host "`nTodos los agentes y modelos estan validos."
 }

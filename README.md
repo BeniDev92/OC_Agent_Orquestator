@@ -24,15 +24,17 @@ opencode.json             Configuración global de opencode (mínima)
 
 | Agente | Modo | Modelo | Edita | Ejecuta comandos | Rol |
 |---|---|---|---|---|---|---|
-| `orchestrator` | primary | deepseek-v4-flash | No | Solo `git` de lectura | Planifica, delega vía `task` e integra. |
-| `profesor` | primary | deepseek-v4-flash | No | No | Explica código; no modifica archivos. |
-| `arquitecto` | subagent | deepseek-v4-flash | No | Solo `git` de lectura | Define arquitectura y contratos antes de implementar. |
-| `frontend` | subagent | deepseek-v4-flash | Sí | Sí | UI, componentes, estilos, a11y. |
-| `backend` | subagent | deepseek-v4-flash | Sí | Sí | APIs, lógica de negocio, persistencia. |
-| `qa` | subagent | deepseek-v4-flash | Sí | Sí | Tests y validación de requisitos. |
+| `orchestrator` | primary | deepseek-v4-flash\* | No | Solo `git` de lectura | Planifica, delega vía `task` e integra. |
+| `profesor` | primary | deepseek-v4-flash\* | No | No | Explica código; no modifica archivos. |
+| `arquitecto` | subagent | deepseek-v4-flash\* | No | Solo `git` de lectura | Define arquitectura y contratos antes de implementar. |
+| `frontend` | subagent | deepseek-v4-flash\* | Sí | Sí | UI, componentes, estilos, a11y. |
+| `backend` | subagent | deepseek-v4-flash\* | Sí | Sí | APIs, lógica de negocio, persistencia. |
+| `qa` | subagent | deepseek-v4-flash\* | Sí | Sí | Tests y validación de requisitos. |
 | `reviewer` | subagent | gpt-5.6-luna | No | Solo `git` de lectura | Code review y seguridad. |
-| `devops` | subagent | deepseek-v4-flash | Sí | Sí | CI/CD, builds, despliegues e infraestructura. |
-| `docs` | subagent | deepseek-v4-flash | Sí | No | README y documentación técnica. |
+| `devops` | subagent | deepseek-v4-flash\* | Sí | Sí | CI/CD, builds, despliegues e infraestructura. |
+| `docs` | subagent | deepseek-v4-flash\* | Sí | No | README y documentación técnica. |
+
+\* Modelo por defecto declarado una sola vez en `opencode.json` (`model`); los agentes lo heredan. `reviewer` lo sobrescribe explícitamente.
 
 Los subagentes no pueden lanzar otros subagentes (`task: deny`) ni acceder a la web; el orquestador es el único que delega.
 
@@ -61,9 +63,14 @@ Abre opencode en la raíz de un proyecto:
 - **Verificación**: cada subagente declara su criterio de terminado (build/lint, tests, migraciones, a11y) y reporta qué archivos tocó y qué probó.
 - **Seguridad**: backend valida entradas y no comitea secretos; reviewer aplica un checklist (secretos, inyección, autorización, sanitización) y termina con veredicto `aprobar` o `cambios requeridos`.
 
-## Ejecutar el verificador de agentes
+## Validar la configuración de agentes
+
+`check-models.ps1` valida los agentes (frontmatter, modo, permisos y modelos) y la disponibilidad de los modelos en opencode:
 
 powershell -ExecutionPolicy Bypass -File check-models.ps1
+
+- Si un provider no responde (p. ej. en CI sin credenciales globales), se omite esa verificación con un aviso; el fallo real (modelo ausente con provider consultable) corta con `exit 1`.
+- El mismo script corre en CI (`.github/workflows/check-agents.yml`) en cada push y PR, en `windows-latest`.
 
 ## Usar este equipo en otros proyectos
 

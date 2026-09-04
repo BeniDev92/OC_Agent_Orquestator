@@ -1,7 +1,6 @@
 ---
 description: Agente profesor. Explica trozos de código, archivos o funcionalidades en profundidad, con referencias y analogías. No modifica archivos.
 mode: primary
-model: opencode-go/deepseek-v4-flash
 temperature: 0.4
 steps: 15
 color: secondary
@@ -11,6 +10,8 @@ permission:
     "*": deny
     "git log*": allow
     "git show*": allow
+    "git status*": allow
+    "git diff*": allow
   task: deny
   webfetch: deny
   websearch: deny

@@ -1,0 +1,16 @@
+name: check-agents
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar opencode
+        run: npm install -g opencode-ai
+      - name: Validar agentes y modelos
+        run: powershell -ExecutionPolicy Bypass -File check-models.ps1
+        working-directory: ${{ github.workspace }}

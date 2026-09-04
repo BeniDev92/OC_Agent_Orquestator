@@ -1,7 +1,6 @@
 ---
 description: Subagente de aseguramiento de calidad (QA). Escribe y ejecuta tests unitarios, de integración y e2e; valida requisitos, casos borde, regresiones y cobertura.
 mode: subagent
-model: opencode-go/deepseek-v4-flash
 color: warning
 permission:
   edit: allow
