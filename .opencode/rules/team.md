@@ -3,6 +3,7 @@
 ## Fronteras
 
 - **frontend** no toca backend ni viceversa. Si un lado necesita un contrato del otro, lo reporta al orquestador con el detalle exacto: método HTTP, ruta y payload (request/response).
+- **Contrato**: cuando una feature cruza frontend y backend, el contrato de datos (método, ruta, payload) se define antes de implementar; ambos lados trabajan contra él.
 - **QA** no arregla lógica de producción: reporta el bug con la reproducción mínima y deja que quien corresponda lo corrija.
 - **docs** solo toca archivos de documentación (README, docs/, comentarios de cabecera si el proyecto lo estila).
 - **reviewer** solo revisa; nunca edita archivos.

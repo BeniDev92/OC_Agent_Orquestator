@@ -1,6 +1,6 @@
 # OC Agent Orquestator
 
-Configuración de [opencode](https://opencode.ai) que define un equipo de desarrollo multiagente: un orquestador que planifica, descompone y delega el trabajo en subagentes especializados (frontend, backend, QA, reviewer y docs), más un agente profesor que solo explica código.
+Configuración de [opencode](https://opencode.ai) que define un equipo de desarrollo multiagente: un orquestador que planifica, descompone y delega el trabajo en subagentes especializados (arquitecto, frontend, backend, QA, reviewer, devops y docs), más un agente profesor que solo explica código.
 
 No contiene código de aplicación: es pura configuración de agentes.
 
@@ -10,10 +10,12 @@ No contiene código de aplicación: es pura configuración de agentes.
 opencode.json             Configuración global de opencode (mínima)
 .opencode/agents/         Definición de los agentes (un archivo = un agente)
   orchestrator.md         Orquestador (primary)
+  arquitecto.md           Subagente de arquitectura y contratos
   frontend.md             Subagente de UI
   backend.md              Subagente de APIs y lógica
   qa.md                   Subagente de tests
   reviewer.md             Subagente de code review (no edita)
+  devops.md               Subagente de CI/CD, builds y deploys
   docs.md                 Subagente de documentación
   profesor.md             Agente profesor (primary, no edita)
 ```
@@ -21,13 +23,15 @@ opencode.json             Configuración global de opencode (mínima)
 ## Agentes
 
 | Agente | Modo | Modelo | Edita | Ejecuta comandos | Rol |
-|---|---|---|---|---|---|
+|---|---|---|---|---|---|---|
 | `orchestrator` | primary | deepseek-v4-flash | No | Solo `git` de lectura | Planifica, delega vía `task` e integra. |
 | `profesor` | primary | deepseek-v4-flash | No | No | Explica código; no modifica archivos. |
+| `arquitecto` | subagent | deepseek-v4-flash | No | Solo `git` de lectura | Define arquitectura y contratos antes de implementar. |
 | `frontend` | subagent | deepseek-v4-flash | Sí | Sí | UI, componentes, estilos, a11y. |
 | `backend` | subagent | deepseek-v4-flash | Sí | Sí | APIs, lógica de negocio, persistencia. |
 | `qa` | subagent | deepseek-v4-flash | Sí | Sí | Tests y validación de requisitos. |
-| `reviewer` | subagent | gpt-5.6-luna | No | No | Code review y seguridad. |
+| `reviewer` | subagent | gpt-5.6-luna | No | Solo `git` de lectura | Code review y seguridad. |
+| `devops` | subagent | deepseek-v4-flash | Sí | Sí | CI/CD, builds, despliegues e infraestructura. |
 | `docs` | subagent | deepseek-v4-flash | Sí | No | README y documentación técnica. |
 
 Los subagentes no pueden lanzar otros subagentes (`task: deny`) ni acceder a la web; el orquestador es el único que delega.
@@ -40,15 +44,16 @@ Abre opencode en la raíz de un proyecto:
 
 - **Agente por defecto**: cualquiera de los primary (orquestador o profesor), ciclando con `Tab` o invocándolo con `@`.
 - **Orquestador**: dale una tarea de desarrollo y él descompone, delega en los subagentes, verifica e integra.
-- **Subagentes**: también se invocan directamente con `@frontend`, `@backend`, `@qa`, `@reviewer`, `@docs`.
+- **Subagentes**: también se invocan directamente con `@arquitecto`, `@frontend`, `@backend`, `@qa`, `@reviewer`, `@devops`, `@docs`.
 - **Profesor**: pídele que explique un trozo de código, un archivo o el proyecto completo.
 
 ## Cómo funciona el flujo
 
 1. El orquestador analiza la petición y la descompone en subtareas, identificando dependencias.
-2. Delega con la herramienta `task` (en paralelo si no hay dependencias, en secuencia si las hay), siempre con objetivo, contexto, archivos y criterios de aceptación.
-3. Integra los resultados y resuelve conflictos entre subagentes (re-delegando o preguntándote).
-4. Antes de cerrar, exige que reviewer o qa validen el trabajo cuando aplique.
+2. Si la feature cruza frontend y backend, define primero el contrato de datos (delega en `arquitecto` para que lo proponga).
+3. Delega con la herramienta `task` (en paralelo si no hay dependencias, en secuencia si las hay), siempre con objetivo, contexto, archivos y criterios de aceptación.
+4. Integra los resultados y resuelve conflictos entre subagentes (re-delegando o preguntándote).
+5. Antes de cerrar, exige que reviewer o qa validen el trabajo cuando aplique. Si reviewer pide cambios, re-delega el fix (máximo 2 iteraciones) y luego escala a ti si persiste.
 
 ## Reglas de especialización
 
