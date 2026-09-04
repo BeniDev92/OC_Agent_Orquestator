@@ -7,7 +7,12 @@ steps: 20
 color: error
 permission:
   edit: deny
-  bash: deny
+  bash:
+    "*": deny
+    "git status*": allow
+    "git log*": allow
+    "git diff*": allow
+    "git show*": allow
   task: deny
   webfetch: deny
   websearch: deny

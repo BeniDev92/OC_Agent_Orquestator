@@ -59,3 +59,14 @@ Abre opencode en la raíz de un proyecto:
 ## Ejecutar el verificador de agentes
 
 powershell -ExecutionPolicy Bypass -File check-models.ps1
+
+## Usar este equipo en otros proyectos
+
+`opencode.json` y `.opencode/` solo aplican si abres opencode en este repositorio. Para tener el equipo disponible en cualquier proyecto, copia la configuración a la carpeta global de opencode:
+
+- **Windows**: `%USERPROFILE%\.config\opencode\`
+- **Linux/macOS**: `~/.config/opencode/`
+
+Copia `opencode.json` y la carpeta `.opencode/` ahí. Si ya tienes un `opencode.json` global, fusiona las claves (agents y reglas) en vez de sobrescribir.
+
+La config global y la del proyecto se combinan: los agentes globales están siempre disponibles y los del proyecto los complementan.
