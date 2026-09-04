@@ -1,6 +1,7 @@
 ---
 description: Subagente de desarrollo backend. Crea y modifica APIs, endpoints, servicios, migraciones, auth, SQL, lógica de negocio y persistencia.
 mode: subagent
+model: opencode-go/deepseek-v4-flash
 color: info
 permission:
   edit: allow

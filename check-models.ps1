@@ -1,4 +1,5 @@
 $ErrorActionPreference = "Stop"
+$PSNativeCommandUseErrorActionPreference = $false
 
 if (-not (Get-Command opencode -ErrorAction SilentlyContinue)) {
   Write-Host "opencode no esta en PATH. Instala opencode o ajusta el PATH y reintenta."
@@ -7,14 +8,6 @@ if (-not (Get-Command opencode -ErrorAction SilentlyContinue)) {
 
 $fail = $false
 $errors = @()
-
-# modelo por defecto en la raiz: todos los agentes sin model lo heredan
-$config = Get-Content "opencode.json" -Raw | ConvertFrom-Json
-if (-not $config.model) {
-  $errors += "ERROR: opencode.json no declara 'model' por defecto."
-  $fail = $true
-}
-$rootModel = $config.model
 
 $effective = @{}
 $agents = Get-ChildItem ".opencode\agents\*.md"
@@ -37,13 +30,12 @@ foreach ($agent in $agents) {
   if ($mode -notin @("primary", "subagent")) { $errors += "${name}: mode invalido ('$mode')"; $fail = $true }
   if ($taskAllow -and $mode -eq "subagent") { $errors += "${name}: un subagent no puede tener 'task: allow'"; $fail = $true }
 
-  if ($model) {
-    if ($model -notmatch '^[^/]+/[^/]+$') { $errors += "${name}: model mal formado ('$model')"; $fail = $true }
-    else { $effective[$name] = $model }
-  } elseif ($rootModel) {
-    $effective[$name] = $rootModel
+  if (-not $model) {
+    $errors += "${name}: falta 'model' (obligatorio en cada agente)"; $fail = $true
+  } elseif ($model -notmatch '^[^/]+/[^/]+$') {
+    $errors += "${name}: model mal formado ('$model')"; $fail = $true
   } else {
-    $errors += "${name}: sin model y sin modelo por defecto en opencode.json"; $fail = $true
+    $effective[$name] = $model
   }
 }
 
@@ -51,9 +43,11 @@ foreach ($agent in $agents) {
 $providers = $effective.Values | ForEach-Object { ($_ -split '/')[0] } | Select-Object -Unique
 $available = @{}
 foreach ($p in $providers) {
-  $out = (opencode models $p) 2>$null
-  if ($LASTEXITCODE -ne 0 -or -not $out) {
-    Write-Host "WARN: provider '$p' no consultable (sin credenciales o sin config). Se omite su verificacion."
+  $out = $null
+  try { $out = & opencode models $p 2>$null } catch {
+    Write-Host "WARN: provider '$p' no consultable ($($_.Exception.Message)). Se omite su verificacion."
+  }
+  if (-not $out) {
     $available[$p] = $null
   } else {
     $available[$p] = @($out -split "\n")

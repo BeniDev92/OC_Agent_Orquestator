@@ -24,17 +24,15 @@ opencode.json             Configuración global de opencode (mínima)
 
 | Agente | Modo | Modelo | Edita | Ejecuta comandos | Rol |
 |---|---|---|---|---|---|---|
-| `orchestrator` | primary | deepseek-v4-flash\* | No | Solo `git` de lectura | Planifica, delega vía `task` e integra. |
-| `profesor` | primary | deepseek-v4-flash\* | No | No | Explica código; no modifica archivos. |
-| `arquitecto` | subagent | deepseek-v4-flash\* | No | Solo `git` de lectura | Define arquitectura y contratos antes de implementar. |
-| `frontend` | subagent | deepseek-v4-flash\* | Sí | Sí | UI, componentes, estilos, a11y. |
-| `backend` | subagent | deepseek-v4-flash\* | Sí | Sí | APIs, lógica de negocio, persistencia. |
-| `qa` | subagent | deepseek-v4-flash\* | Sí | Sí | Tests y validación de requisitos. |
+| `orchestrator` | primary | deepseek-v4-flash | No | Solo `git` de lectura | Planifica, delega vía `task` e integra. |
+| `profesor` | primary | deepseek-v4-flash | No | No | Explica código; no modifica archivos. |
+| `arquitecto` | subagent | deepseek-v4-flash | No | Solo `git` de lectura | Define arquitectura y contratos antes de implementar. |
+| `frontend` | subagent | deepseek-v4-flash | Sí | Sí | UI, componentes, estilos, a11y. |
+| `backend` | subagent | deepseek-v4-flash | Sí | Sí | APIs, lógica de negocio, persistencia. |
+| `qa` | subagent | deepseek-v4-flash | Sí | Sí | Tests y validación de requisitos. |
 | `reviewer` | subagent | gpt-5.6-luna | No | Solo `git` de lectura | Code review y seguridad. |
-| `devops` | subagent | deepseek-v4-flash\* | Sí | Sí | CI/CD, builds, despliegues e infraestructura. |
-| `docs` | subagent | deepseek-v4-flash\* | Sí | No | README y documentación técnica. |
-
-\* Modelo por defecto declarado una sola vez en `opencode.json` (`model`); los agentes lo heredan. `reviewer` lo sobrescribe explícitamente.
+| `devops` | subagent | deepseek-v4-flash | Sí | Sí | CI/CD, builds, despliegues e infraestructura. |
+| `docs` | subagent | deepseek-v4-flash | Sí | No | README y documentación técnica. |
 
 Los subagentes no pueden lanzar otros subagentes (`task: deny`) ni acceder a la web; el orquestador es el único que delega.
 

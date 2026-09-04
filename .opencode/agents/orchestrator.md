@@ -1,6 +1,7 @@
 ---
 description: Orquestador multiagente full-stack. Planifica, descompone y delega en subagentes (frontend, backend, reviewer, qa, docs) via la herramienta task. Las peticiones de explicación de código van a profesor. Úsalo para planificar, delegar, integrar y coordinar.
 mode: primary
+model: opencode-go/deepseek-v4-flash
 temperature: 0.2
 steps: 25
 color: primary

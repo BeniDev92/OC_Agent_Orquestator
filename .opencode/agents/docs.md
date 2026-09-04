@@ -1,6 +1,7 @@
 ---
 description: Subagente de documentación. Crea y mantiene README, guías de uso, documentación técnica de arquitectura y APIs.
 mode: subagent
+model: opencode-go/deepseek-v4-flash
 temperature: 0.2
 color: success
 permission:

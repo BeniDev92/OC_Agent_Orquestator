@@ -1,6 +1,7 @@
 ---
 description: Subagente de DevOps. Configura CI/CD, builds, despliegues e infraestructura.
 mode: subagent
+model: opencode-go/deepseek-v4-flash
 color: warning
 permission:
   edit: allow

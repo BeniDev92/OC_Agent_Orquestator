@@ -1,6 +1,7 @@
 ---
 description: Subagente de desarrollo frontend. Crea y modifica UI, componentes, estilos, responsive y accesibilidad.
 mode: subagent
+model: opencode-go/deepseek-v4-flash
 color: accent
 permission:
   edit: allow
