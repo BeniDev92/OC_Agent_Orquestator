@@ -6,10 +6,17 @@ color: accent
 permission:
   edit: allow
   bash:
-    "*": ask
-    "npm run *": allow
-    "npm test*": allow
-    "npm run build*": allow
+    "*": allow
+    "git commit*": deny
+    "git push*": deny
+    "git reset --hard*": deny
+    "git clean*": deny
+    "git checkout --*": deny
+    "git restore*": deny
+    "git branch -D*": deny
+    "rm -rf*": deny
+    "Remove-Item*": deny
+    "del *": deny
   task: deny
   webfetch: deny
   websearch: deny
