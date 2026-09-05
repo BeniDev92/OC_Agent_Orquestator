@@ -8,7 +8,9 @@ No contiene código de aplicación: es pura configuración de agentes.
 
 ```
 opencode.json             Configuración global de opencode (mínima)
-.opencode/agents/         Definición de los agentes (un archivo = un agente)
+.opencode/rules/
+  team.md                 Capa GLOBAL (reglas compartidas por todos los agentes)
+.opencode/agents/         Capa ROLE (un archivo = un agente)
   orchestrator.md         Orquestador (primary)
   arquitecto.md           Subagente de arquitectura y contratos
   frontend.md             Subagente de UI
@@ -19,6 +21,11 @@ opencode.json             Configuración global de opencode (mínima)
   docs.md                 Subagente de documentación
   profesor.md             Agente profesor (primary, no edita)
 ```
+
+La definición está organizada en dos capas para evitar duplicación:
+
+- **GLOBAL** (`.opencode/rules/team.md`, inyectado a todos vía `instructions`): fronteras, política de decisión y niveles de autonomía, gestión de incertidumbre (FACT/ASSUMPTION/DECISION/QUESTION/RISK), jerarquía de prioridades, seguridad, política de git, protocolo de comunicación/handoff, formato de salida y Definition of Done base.
+- **ROLE** (cada `.md` de `.opencode/agents/`): identidad, alcance (responsable / no responsable), inputs, autonomía, workflow, política de decisión, estándares de ingeniería del rol, testing y Definition of Done específica. Las secciones genéricas se heredan de la capa GLOBAL, no se duplican.
 
 ## Agentes
 
@@ -57,9 +64,14 @@ Abre opencode en la raíz de un proyecto:
 
 ## Reglas de especialización
 
-- **Fronteras**: frontend no toca backend y viceversa; si necesitan algo del otro lado, reportan el contrato exacto (método, ruta, payload) al orquestador. QA no arregla lógica de producción; docs solo toca documentación.
+Cada agente define en su `.md` (capa ROLE) identidad, alcance, inputs, autonomía, workflow, política de decisión, estándares de ingeniería, testing y Definition of Done específica. La capa GLOBAL (`team.md`) aporta lo común a todos:
+
+- **Fronteras**: frontend no toca backend y viceversa; si necesitan algo del otro lado, reportan el contrato exacto (método, ruta, payload) al orquestador. QA no arregla lógica de producción; docs solo toca documentación; reviewer solo revisa.
+- **Política de decisión**: niveles de autonomía (0 autónomo → 3 aprobación humana) y cuándo escalar al orquestador o al usuario.
+- **Incertidumbre**: los agentes etiquetan hechos, supuestos, decisiones, preguntas y riesgos para que una suposición no se convierta en requisito.
+- **Comunicación**: los handoffs entre agentes siguen un protocolo estructurado (contexto, completado, decisiones, archivos, interfaces, pendientes, riesgos, validación).
 - **Verificación**: cada subagente declara su criterio de terminado (build/lint, tests, migraciones, a11y) y reporta qué archivos tocó y qué probó.
-- **Seguridad**: backend valida entradas y no comitea secretos; reviewer aplica un checklist (secretos, inyección, autorización, sanitización) y termina con veredicto `aprobar` o `cambios requeridos`.
+- **Seguridad**: reglas comunes (no secretos, inputs no confiables, no deshabilitar controles) + checklist de seguridad de reviewer.
 
 ## Validar la configuración de agentes
 
